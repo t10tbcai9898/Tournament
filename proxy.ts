@@ -1,17 +1,12 @@
-import { updateSession } from "@/lib/supabase/middleware"
-// Source - https://stackoverflow.com/q
-// Posted by rolias4031
-// Retrieved 2026-01-22, License - CC BY-SA 4.0
+import { proxy } from 'next/server'
 
-import { NextResponse } from 'next/server';
+export default proxy({
+  matcher: ['/dashboard/:path*'],
+  handler(request) {
+    const token = request.cookies.get('token')
 
-export default function middleware(request) {
-  return NextResponse.next();
-}
-
-
-export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
-}
+    if (!token) {
+      return Response.redirect(new URL('/login', request.url))
+    }
+  }
+})
